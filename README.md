@@ -16,7 +16,7 @@
             stfDevice.connectToSTFDevice();
             stfRemoteDeviceUrl = stfDevice.getRemoteDeviceUrl();
 
-            LogUtil.info("connect device Url : " + stfRemoteDeviceUrl);
+            
         } catch (Exception e) {
             throw  new ExceptionInInitializerError("Can not connect device to open stf. Details : " + e.getMessage());
         }
@@ -30,8 +30,8 @@
                 stfDevice.releaseOpenSTFDevice();
                 stfDevice.adbDisconnect();
             } catch (IOException e) {
-                LogUtil.error("Can not disconnect " + stfRemoteDeviceUrl + ". Details : " + e.getMessage());
+                //error handling
             } catch (InterruptedException e) {
-                LogUtil.error("Can not disconnect " + stfRemoteDeviceUrl + ". Details : " + e.getMessage());
+                //error handling
             }
 ```
