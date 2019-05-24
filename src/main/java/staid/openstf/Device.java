@@ -230,9 +230,10 @@ public class Device {
 
     private  boolean isAlreadyConnectedToDevice() {
         String json = getDevice();
+        String email = (new User(staidOpenSTF)).retrieveUserInformation().getEmail();
 
         JSONObject jsonObject = new JSONObject(json);
-        if (!jsonObject.getJSONObject("device").isNull("owner") && jsonObject.getJSONObject("device").getJSONObject("owner").getString("email").equals(staidOpenSTF.getEmail())
+        if (!jsonObject.getJSONObject("device").isNull("owner") && jsonObject.getJSONObject("device").getJSONObject("owner").getString("email").equals(email)
                 && jsonObject.getJSONObject("device").getBoolean("remoteConnect") ){
             this.remoteDeviceUrl = jsonObject.getJSONObject("device").getString("remoteConnectUrl");
 

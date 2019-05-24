@@ -11,7 +11,7 @@ public class DevicesTest {
 
     @BeforeClass
     public static void getOpenSTF(){
-        staidOpenSTF = new StaidOpenSTF("", "", "");
+        staidOpenSTF = new StaidOpenSTF("", "");
     }
 
     @Test

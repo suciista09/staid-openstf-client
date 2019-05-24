@@ -4,12 +4,10 @@ public class StaidOpenSTF {
 
     private String url;
     private String token;
-    private String email;
 
-    public StaidOpenSTF(String url, String email, String token){
+    public StaidOpenSTF(String url, String token){
         this.url = url + "/api/v1";
         this.token = token;
-        this.email = email;
     }
 
     public String getUrl() {
@@ -28,7 +26,4 @@ public class StaidOpenSTF {
         this.token = token;
     }
 
-    public String getEmail() {
-        return email;
-    }
 }
