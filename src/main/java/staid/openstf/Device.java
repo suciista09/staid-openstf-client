@@ -5,12 +5,15 @@ import io.restassured.response.Response;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
 
 public class Device {
 
@@ -36,6 +39,7 @@ public class Device {
 
         if (!response.getBody().asString().contains("success")){
             LOGGER.error("Error while getDevices()");
+            return null;
         }
 
         LOGGER.info(response.asString());
@@ -90,9 +94,11 @@ public class Device {
             LOGGER.error("device " + serial + " is not found.");
             return false;
         }
-        boolean present = jsonObject.getBoolean("present");
-        boolean ready = jsonObject.getBoolean("ready");
-        boolean using = jsonObject.getBoolean("using");
+
+        JSONObject jsonObject_device = jsonObject.getJSONObject("device");
+        boolean present = jsonObject_device.getBoolean("present");
+        boolean ready = jsonObject_device.getBoolean("ready");
+        boolean using = jsonObject_device.getBoolean("using");
 
         if (!present || !ready || using || !jsonObject.isNull("owner")){
             LOGGER.error("Device is not available.");
@@ -241,6 +247,56 @@ public class Device {
         }
 
         return false;
+    }
+
+    public String getAvailableDeviceByCriteria(Map<String,String> criteria){
+
+        //get list all of devices
+        String devices_s = getDevices();
+
+        if (devices_s != null){
+            JSONObject jsonObject = new JSONObject(devices_s);
+
+            JSONArray devices = jsonObject.getJSONArray("devices");
+
+            for (int i = 0 ; i < devices.length(); i++){
+                JSONObject device = devices.getJSONObject(i);
+
+                if (isMatchWithCriteria(device, criteria)){
+                    this.serial = device.getString("serial");
+                    if (isDeviceAvailable()){
+                        return getSerial();
+                    }
+
+                }
+            }
+        }
+
+        LOGGER.error("Can not find device with criteria " + criteria);
+        return null;
+    }
+
+    private boolean isMatchWithCriteria(JSONObject device, Map<String, String> criteria) {
+
+        int counter_true = 0;
+        for (Map.Entry entry : criteria.entrySet()){
+
+            if (device.has(entry.getKey().toString())){
+                if (device.getString(entry.getKey().toString()).equals(entry.getValue().toString())){
+                    counter_true ++;
+                }else {
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }
+
+        if (counter_true == criteria.size()){
+            return true;
+        }else {
+            return false;
+        }
     }
 
     public String getSerial() {
