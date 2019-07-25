@@ -128,6 +128,11 @@ public class Device {
 
     }
 
+    public void stopUsingOpenSTF(){
+        disconnectRemoteDevice();
+        releaseOpenSTFDevice();
+    }
+
     public boolean releaseOpenSTFDevice(){
         Response response = RestAssured.given()
                 .header("Authorization", "Bearer " + this.staidOpenSTF.getToken())
@@ -163,35 +168,40 @@ public class Device {
         }
     }
 
-    private boolean disconnectRemoteDevice(){
+    public boolean disconnectRemoteDevice(){
         Response response = RestAssured.given()
                 .header("Authorization", "Bearer " + this.staidOpenSTF.getToken())
                 .delete(this.staidOpenSTF.getUrl() + "/user/devices/" + serial + "/remoteConnect");
 
         if (response.getStatusCode()!=200 || !response.getBody().asString().contains("success")){
             //put logger
-            LOGGER.warn("Disconnect device " + serial + " is failed. please disconnect manual with this following command \n" +
-                    "curl -X DELETE -H \"Authorization: Bearer YOUR-TOKEN-HERE\" https://stf.example.org/api/v1/user/devices/"+serial+"/remoteConnect");
+            LOGGER.info("Disconnect device " + serial + " is failed. please disconnect manual with this following command \n" +
+                    "curl -X DELETE -H \"Authorization: Bearer YOUR-TOKEN-HERE\" https://stf.example.org/api/v1/user/devices/"+serial+"/remoteConnect\n" +
+                    "Status Code  : " +response.getStatusCode());
             return false;
         }
 
         JSONObject jsonObject = new JSONObject(response.asString());
         boolean success = jsonObject.getBoolean("success");;
         if (!success){
-            LOGGER.warn("Disconnect device " + serial + " is failed. please disconnect manual with this following command \n" +
-                    "curl -X DELETE -H \"Authorization: Bearer YOUR-TOKEN-HERE\" https://stf.example.org/api/v1/user/devices/"+serial+"/remoteConnect");
+            LOGGER.info("Disconnect device " + serial + " is failed. please disconnect manual with this following command \n" +
+                    "curl -X DELETE -H \"Authorization: Bearer YOUR-TOKEN-HERE\" https://stf.example.org/api/v1/user/devices/"+serial+"/remoteConnect\n" +
+                    "Details : " + jsonObject.getString("description"));
             return false;
         }
 
+        LOGGER.info(jsonObject.getString("description"));
         return success;
     }
 
     public void adbConnect() throws IOException, InterruptedException {
         executeCommand("adb connect " + remoteDeviceUrl);
+        LOGGER.info("adb connect " + remoteDeviceUrl);
     }
 
     public void adbDisconnect() throws IOException, InterruptedException {
         executeCommand("adb disconnect " + remoteDeviceUrl);
+        LOGGER.info("adb disconnect " +remoteDeviceUrl);
     }
 
     private void executeCommand(String command) throws IOException, InterruptedException {
@@ -227,9 +237,12 @@ public class Device {
     public void connectToSTFDevice() throws Exception {
 
         if (!isAlreadyConnectedToDevice()) {
+            LOGGER.info("Not connected yet to openSTF. Connecting...");
             openDevice();
             this.remoteDeviceUrl = connectUrlRemoteDevice();
-            adbConnect();
+            //adbConnect();
+        }else {
+            LOGGER.info("Already connected to openSTF with serial " + this.serial);
         }
 
     }

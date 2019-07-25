@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'staid-openstf-client'
-version '1.0.0'
+version '1.2.0'
 
 sourceCompatibility = 1.8
 
