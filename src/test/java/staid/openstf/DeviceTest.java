@@ -18,7 +18,7 @@ public class DeviceTest {
 
     @Test
     public void testConnect() throws IOException, InterruptedException {
-        Device device = new Device(staidOpenSTF, "J6AXGF0149506PK");
+        Device device = new Device(staidOpenSTF);
         try {
             device.connectToSTFDevice();
             device.adbConnect();
