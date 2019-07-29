@@ -46,6 +46,21 @@ public class Device {
         return response.asString();
     }
 
+    public String getUserDevices(){
+        Response response = RestAssured.given()
+                .header("Authorization", "Bearer " + this.staidOpenSTF.getToken())
+                .accept("application/json")
+                .get(this.staidOpenSTF.getUrl() + "/user/devices");
+
+        if (!response.getBody().asString().contains("success")){
+            LOGGER.error("Error while getUserDevices()");
+            return null;
+        }
+
+        LOGGER.info(response.asString());
+        return response.asString();
+    }
+
     public String getDevice(){
         Response response = RestAssured.given()
                 .header("Authorization", "Bearer " + this.staidOpenSTF.getToken())
@@ -316,8 +331,46 @@ public class Device {
         return serial;
     }
 
+    public String getSerial(String remoteDeviceUrl){
+        String json = getUserDevices();
+
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray devices = jsonObject.getJSONArray("devices");
+
+        for (int i = 0 ; i < devices.length() ; i++){
+            if (devices.getJSONObject(i).getString("remoteConnectUrl").equalsIgnoreCase(remoteDeviceUrl)){
+                return devices.getJSONObject(i).getString("serial");
+            }
+        }
+
+        return null;
+    }
+
     public String getRemoteDeviceUrl() {
         return remoteDeviceUrl;
+    }
+
+    public String getRemoteDeviceUrl(String serial){
+        String json = getUserDevices();
+
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray devices = jsonObject.getJSONArray("devices");
+
+        for (int i = 0 ; i < devices.length() ; i++){
+            if (devices.getJSONObject(i).getString("serial").equalsIgnoreCase(serial)){
+                return devices.getJSONObject(i).getString("remoteConnectUrl");
+            }
+        }
+
+        return null;
+    }
+
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
+
+    public void setRemoteDeviceUrl(String remoteDeviceUrl) {
+        this.remoteDeviceUrl = remoteDeviceUrl;
     }
 
 }
