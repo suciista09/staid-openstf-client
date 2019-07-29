@@ -39,7 +39,7 @@ public class Main {
                     device.adbConnect();
 
                     //produce file
-                    JSONObject jsonObject = new JSONObject();
+                    JSONObject jsonObject = getJsonObjectFromFile(pathFile);
                     jsonObject.put("udid", device.getRemoteDeviceUrl());
 
                     FileWriter fileWriter = new FileWriter(new File(pathFile));
@@ -75,6 +75,7 @@ public class Main {
                             device.setSerial(device.getSerial(remoteDeviceUrl));
                             device.stopUsingOpenSTF();
                             device.adbDisconnect();
+
 
                         }else {
                             //throw exception
