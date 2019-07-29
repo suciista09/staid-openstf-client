@@ -11,8 +11,9 @@
 ```
         try {
             StaidOpenSTF staidOpenSTF = new StaidOpenSTF("stfUrl", "stfToken");
-            stfDevice = new Device(staidOpenSTF, stfDeviceSerial);
+            stfDevice = new Device(staidOpenSTF);
 
+            stfDevice.setSerial("xxxxxx");
             stfDevice.connectToSTFDevice();
             stfRemoteDeviceUrl = stfDevice.getRemoteDeviceUrl();
 
