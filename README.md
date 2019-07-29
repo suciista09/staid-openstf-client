@@ -5,8 +5,9 @@
 ```./gradlew jar```
 
 2. Add jar as your library
+3. execute as jar
 
-## In your test
+## Add Jar As Library
 1. Set up
 ```
         try {
@@ -37,5 +38,26 @@
             }
 ```
 
-## Next Feature
-- be able to run with random available device by providing criteria
+## Execute As Jar
+1. create config file (e.g. config.properties)
+```
+stfUrl=
+stfToken=
+```
+2. list command
+- connect to specific serial device
+```
+{path of config.prop} connect {serial}
+```
+- connect to specific serial and add to json. This feature will be usefull to run distributed test / parallel test. "udid" : "{deviceRemoteUrl}" will be added in json
+```
+{path of config.prop} connect {serial} {cap def file name.json}
+```
+- disconnect from specific serial or specific deviceRemoteUrl
+```
+{path of config.prop} disconnect serial={serial}/remoteDeviceUrl={deviceConnectedUrl}
+```
+- disconnect from json file. It will search for udid
+```
+{path of config.prop} disconnect def-cap1.json def-cap2.json ...
+```
