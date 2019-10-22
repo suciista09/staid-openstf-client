@@ -155,7 +155,7 @@ public class Device {
         int counter = 0;
         LOGGER.info("Waiting available device... ");
         try {
-                while ((targetUdid == "" || targetUdid == null) && counter < 5) {
+                while ((targetUdid == "" || targetUdid == null) && counter < 120) {
                 targetUdid = getOnlyAvailableDevice();
                 TimeUnit.MINUTES.sleep(1);
                 counter++;
