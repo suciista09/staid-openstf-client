@@ -1,19 +1,21 @@
 package staid.openstf;
 
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 
 public class Device {
 
@@ -122,6 +124,47 @@ public class Device {
 
         LOGGER.info("device " + serial + " is available");
         return true;
+    }
+
+    public String getOnlyAvailableDevice() {
+        String response = getDevices();
+        ArrayList<String> listofAvailableDevice = new ArrayList<String>();
+        
+        JSONObject jsonObject = new JSONObject(response);
+        JSONArray listOfDevices = jsonObject.getJSONArray("devices");
+
+        listOfDevices.forEach( device -> {
+            JSONObject deviceObj = (JSONObject)device;
+            boolean present = deviceObj.getBoolean("present");
+            boolean using = deviceObj.getBoolean("using");
+            boolean isOwnerNull = deviceObj.get("owner") == null;
+            String deviceSerial = deviceObj.getString("serial");
+            
+            if (present && !isOwnerNull && !using) {
+                listofAvailableDevice.add(deviceSerial);
+            }
+        });
+
+        String targetDevice = listofAvailableDevice.size() > 0 ? listofAvailableDevice.get(0) : null;
+        return targetDevice;
+    }
+
+    public String waitUntilDevice() {
+        String targetUdid = "";
+        
+        int counter = 0;
+        LOGGER.info("Waiting available device... ");
+        try {
+                while ((targetUdid == "" || targetUdid == null) && counter < 5) {
+                TimeUnit.MINUTES.sleep(1);
+                targetUdid = getOnlyAvailableDevice();
+                counter++;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return targetUdid;
     }
 
     private boolean openDevice(){
