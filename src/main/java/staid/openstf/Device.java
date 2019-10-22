@@ -149,15 +149,15 @@ public class Device {
         return targetDevice;
     }
 
-    public String waitUntilDevice() {
+    public String waitAvailableDevice() {
         String targetUdid = "";
         
         int counter = 0;
         LOGGER.info("Waiting available device... ");
         try {
                 while ((targetUdid == "" || targetUdid == null) && counter < 5) {
-                TimeUnit.MINUTES.sleep(1);
                 targetUdid = getOnlyAvailableDevice();
+                TimeUnit.MINUTES.sleep(1);
                 counter++;
             }
         } catch (InterruptedException e) {
