@@ -44,7 +44,6 @@ public class Device {
             return null;
         }
 
-        // LOGGER.info(response.asString());
         return response.asString();
     }
 
@@ -146,7 +145,6 @@ public class Device {
             }
         });
         
-        System.out.println("Jumlah Device " +listofAvailableDevice.size());
         String targetDevice = listofAvailableDevice.size() > 0 ? listofAvailableDevice.get(0) : null;
         return targetDevice;
     }
