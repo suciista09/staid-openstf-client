@@ -44,7 +44,7 @@ public class Device {
             return null;
         }
 
-        LOGGER.info(response.asString());
+        // LOGGER.info(response.asString());
         return response.asString();
     }
 
@@ -137,14 +137,16 @@ public class Device {
             JSONObject deviceObj = (JSONObject)device;
             boolean present = deviceObj.getBoolean("present");
             boolean using = deviceObj.getBoolean("using");
-            boolean isOwnerNull = deviceObj.get("owner") == null;
+            boolean isConnected = deviceObj.getBoolean("ready");
+            boolean isOwnerNull = deviceObj.isNull("owner");
             String deviceSerial = deviceObj.getString("serial");
             
-            if (present && !isOwnerNull && !using) {
+            if (isConnected && isOwnerNull && present && !using) {
                 listofAvailableDevice.add(deviceSerial);
             }
         });
-
+        
+        System.out.println("Jumlah Device " +listofAvailableDevice.size());
         String targetDevice = listofAvailableDevice.size() > 0 ? listofAvailableDevice.get(0) : null;
         return targetDevice;
     }
