@@ -1,11 +1,12 @@
 package staid.openstf;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class DeviceTest {
 
@@ -34,7 +35,6 @@ public class DeviceTest {
 
     @Test
     public void getAvailableDeviceByCriteria() {
-        StaidOpenSTF staidOpenSTF = new StaidOpenSTF("", "");
         Device device = new Device(staidOpenSTF);
 
         Map<String, String> criteria = new HashMap<>();
@@ -43,6 +43,24 @@ public class DeviceTest {
 
         String serial = device.getAvailableDeviceByCriteria(criteria);
         System.out.println("serial : " + serial);
+    }
+
+    @Test
+    public void getOnlyAvailableDevice() {
+        Device device = new Device(staidOpenSTF);
+
+        String serialDevice = device.waitAvailableDevice();
+        System.out.println("Available device : " +serialDevice);
+        Assert.assertFalse("it should not be false", serialDevice.equalsIgnoreCase(""));
+    }
+
+    @Test
+    public void getRandomDevice() {
+        Device device = new Device(staidOpenSTF);
+
+        String serialDevice = device.getOnlyAvailableDevice();
+        System.out.println("Available device : " +serialDevice);
+        Assert.assertFalse("it should not be false", serialDevice.equalsIgnoreCase(""));
     }
 
 }
